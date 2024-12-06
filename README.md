@@ -11,7 +11,7 @@
 
 ### 1. Clone Repository
 ```bash
-git clone https://github.com/yourusername/railway-management-system.git
+git clone https://github.com/SudhanshuAi/irctc_api.git
 cd railway-management-system` 
 
 ## 2. Install Dependencies
