@@ -1,74 +1,129 @@
-## Railway Management System API
+# Railway Management System
+
+## Project Overview
+This is a NodeJs-based Railway Management System that allows users to register, login, check train seat availability, and book seats. The system supports role-based access with admin and user roles.Uses Pessimistic Locking to handle race around condition.
+
+## Tech Stack
+- Backend: NodeJs
+- Database: PostgreSQL
+- Authentication: JsonWebToken
+- Password Hashing: Bcrypt
+- ORM: Prisma
 
 ## Prerequisites
+-   **Node.js**  (v16+)
+-   **PostgreSQL**
+-   **npm**
 
-- **Node.js** (v16+)
-- **PostgreSQL**
-- **npm**
+## Setup and Installation
 
-## Setup Instructions
-
-### 1. Clone Repository
+### 1. Clone the Repository
 ```bash
 git clone https://github.com/SudhanshuAi/irctc_api.git
-cd railway-management-system` 
+cd irctc_api
+```
 
-## 2. Install Dependencies
-
-`npm install` 
-
-### 3. Database Setup
-
-#### Create PostgreSQL Database
-
-`# Create database
-createdb railway_db
-
-### 4. Environment Configuration
-
-Create a `.env` file in the project root and add the following:
-
-
+```
 `DATABASE_URL="postgresql://username:password@localhost:5432/railway_db"
-JWT_SECRET="your_unique_secret_key"
-ADMIN_API_KEY="your_generated_admin_api_key"
-PORT=3000` 
+ADMIN_API_KEY=your_secret_admin_api_key
+JWT_SECRET=your_jwt_secret_key
+```
 
 ### 5. Prisma Configuration
-
-`# Generate Prisma Client
+```bash
+# Generate Prisma Client
 npx prisma generate
 
 # Run database migrations
-npx prisma migrate dev --name init` 
+npx prisma migrate dev --name init`
+```
 
-### 6. Generate Admin API Key
-
-`# Use OpenSSL
-openssl rand -hex 32` 
-
-### 7. Run Application
-
-#### Development Mode
-
-`npm run dev` 
-
-----------
+### 6. Run the Application
+```bash
+npm run dev
+```
 
 ## API Endpoints
 
-### Authentication
+### User Registration
+- **URL**: `/auth/register
+- **Method**: POST
+- **Request Body**:
+```json
+{
+  "username": "string",
+  "email": "string",
+  "password": "string"
+  "role": "string"
+}
+```
 
--   `POST /auth/register`: User Registration
--   `POST /auth/login`: User Login
--   `GET /auth/profile`: Get User Profile
+### User Login
+- **URL**: `/auth/login`
+- **Method**: POST
+- **Request Body**:
+```json
+{
+  "username": "string",
+  "password": "string"
+}
+```
 
-### Train Management
+### Add Train (Admin Only)
+- **URL**: `/trains/add`
+- **Method**: POST
+- **Headers**: `X-API-Key: [Admin API Key]`
+- **Request Body**:
+```json
+{
+  "name": "string",
+  "source": "string",
+  "destination": "string",
+  "totalSeats": "integer"
+}
+```
 
--   `POST /trains/add`: Add Train (Admin Only)
--   `GET /trains/availability`: Check Train Availability
+### Check Seat Availability
+- **URL**: `/trains/availability`
+- **Method**: GET
+- **Query Parameters**: 
+  - `source`: string
+  - `destination`: string
 
-### Booking
+### Book Seat
+- **URL**: `/bookings/book`
+- **Method**: POST
+- **Headers**: `Authorization: Bearer [JWT Token]`
+- **Request Body**:
+```json
+{
+  "trainId": "integer",
+}
+```
 
--   `POST /bookings/book`: Book Train Seat
--   `GET /bookings/details`: Get Booking Details
+### Get Booking Details
+- **URL**: `/bookings/details`
+- **Method**: GET
+- **Headers**: `Authorization: Bearer [JWT Token]`
+
+## Security Features
+- Password hashing with bcrypt
+- JWT-based authentication
+- Admin API key protection
+- Race condition handling for seat bookings
+
+## Assumptions
+
+- Bookings are confirmed instantly upon successful seat allocation
+- Train is automatically marked inactive if no seats are available
+
+
+## Contributing
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+## License
+Distributed under the MIT License. See `LICENSE` for more information.
